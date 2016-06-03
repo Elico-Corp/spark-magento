@@ -41,11 +41,15 @@ $mainWishlist = null;
                 <div>
                     <input type="radio" class="itoris-wishlist-radio" name="itoris-wishlist-radio" value="<?php echo $wishlist['multiwishlist_id'] ?>"
                            id="itoris-wishlist-radio-<?php echo $wishlist['multiwishlist_id'] ?>"
-                        <?php if ($wishlist['multiwishlist_is_main']): $mainWishlist = $wishlist['multiwishlist_id']; ?> checked="checked" <?php endif; ?>
+                        <?php if ($wishlist['multiwishlist_is_main']): $mainWishlist = $wishlist['multiwishlist_id']; ?>
+                           checked="checked"
+                        <?php else: ?>
+                           style="display:none"
+                        <?php endif; ?>
                            alt="<?php echo htmlentities($this->__($wishlist['multiwishlist_name'])) ?>"
                         />
                     <?php if ($wishlist['multiwishlist_is_main']): ?>
-                    <label for="itoris-wishlist-radio-<?php echo $wishlist['multiwishlist_id'] ?>"><?php echo $this->__('Add to wishlist.'); ?></label>
+                    <label style="display:none" for="itoris-wishlist-radio-<?php echo $wishlist['multiwishlist_id'] ?>"><?php echo $this->__('Add to wishlist.'); ?></label>
                     <?php else: ?>
                     <label for="itoris-wishlist-radio-<?php echo $wishlist['multiwishlist_id'] ?>"><?php echo $this->__('Reserve it and purchase it once available.'); ?></label>
                     <?php endif; ?>
