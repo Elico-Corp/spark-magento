@@ -41,7 +41,7 @@ $mainWishlist = null;
                 <div>
                     <input type="radio" class="itoris-wishlist-radio" name="itoris-wishlist-radio" value="<?php echo $wishlist['multiwishlist_id'] ?>"
                            id="itoris-wishlist-radio-<?php echo $wishlist['multiwishlist_id'] ?>"
-                        <?php if ($wishlist['multiwishlist_is_main']): $mainWishlist = $wishlist['multiwishlist_id']; ?>
+                        <?php if (!$wishlist['multiwishlist_is_main']): $mainWishlist = $wishlist['multiwishlist_id']; ?>
                            checked="checked"
                         <?php else: ?>
                            style="display:none"
