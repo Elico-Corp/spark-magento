@@ -32,6 +32,69 @@ class Itoris_MWishlist_AjaxController extends Mage_Wishlist_IndexController {
 		parent::preDispatch();
 	}
 
+	public function checkProductAction()
+	{
+		$itemsTable = $this->itemsTable;
+		$wishlistItemTable = $this->wishlistTable;
+		
+		$result = array(
+				'success'  => false,
+				'error'    => null,
+				'redirect' => null,
+				'qtyvalue' => null,
+		);
+		$product_id = $this->getRequest()->getParam('product_id');
+		$mwishlistnm = new Itoris_MWishlist_Model_Mwishlistnames();
+		$extproductwish = $mwishlistnm->isProductInWishlist($product_id);
+		
+		if(empty($extproductwish))
+		{
+			$result['error'] = $this->__('Product is not in whishlist');
+		}
+		else
+		{
+			$db = Mage::getSingleton('core/resource')->getConnection('core_write');
+			$productname = $db->fetchAll("SELECT * FROM $wishlistItemTable WHERE `product_id` = $product_id limit 1");
+			$message = $this->__('Product already inside whishlist', $product_id);
+			$result['message'] = $message;
+			$result['qtyvalue'] = (int)$productname[0]['qty'];
+			$result['success'] = true;
+		}
+		
+		$this->getResponse()->setBody(Zend_Json::encode($result));
+		
+	}
+	
+	public function updateItemOptionsAction() {
+		
+		$result = array(
+				'success'  => false,
+				'error'    => null,
+				'redirect' => null,
+		);
+		
+		$itemsTable = $this->itemsTable;
+		$wishlistItemTable = $this->wishlistTable;
+		
+		$id = (int) $this->getRequest()->getParam('id');
+		$qty = (int) $this->getRequest()->getParam('qty');
+		$qty = $qty ? $qty : 1;
+
+		try {
+			$db = Mage::getSingleton('core/resource')->getConnection('core_write');
+			$db->query("UPDATE $wishlistItemTable SET `qty` = $qty WHERE `product_id` = $id limit 1");
+			//save the data
+			$message = $this->__('%1$s Product quantity updted successfully', $id);
+			$result['message'] = $message;
+			$result['success'] = true;
+
+		} catch (Exception $e){
+			$result['error'] = $this->__($e->getMessage());
+		}
+		
+		$this->getResponse()->setBody(Zend_Json::encode($result));
+
+	}
 	public function AddProductAction() {
 		$result = array(
 			'success'  => false,
