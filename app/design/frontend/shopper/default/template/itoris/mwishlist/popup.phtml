@@ -52,6 +52,9 @@ $mainWishlist = null;
                     <label style="display:none" for="itoris-wishlist-radio-<?php echo $wishlist['multiwishlist_id'] ?>"><?php echo $this->__('Add to wishlist.'); ?></label>
                     <?php else: ?>
                     <label for="itoris-wishlist-radio-<?php echo $wishlist['multiwishlist_id'] ?>"><?php echo $this->__('Reserve it and purchase it once available.'); ?></label>
+                    <br/>
+                    <label for="itoris-wishlist-radiostack-qty-label"><?php echo $this->__('Qty:'); ?></label>
+                    <input type="text" name="itoris-wishlist-radiostack-textqty" value="1" id="itoris-wishlist-radiostack-textqty" />     
                     <?php endif; ?>
                 </div>
             <?php endforeach ?>

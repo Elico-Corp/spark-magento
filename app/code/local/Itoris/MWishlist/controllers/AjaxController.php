@@ -27,6 +27,12 @@ require_once Mage::getModuleDir('controllers', 'Mage_Wishlist') . DS . 'IndexCon
 
 class Itoris_MWishlist_AjaxController extends Mage_Wishlist_IndexController {
 
+	protected $itemsTable = 'itoris_mwishlist_items';
+	protected $wishlistTable = 'wishlist_item';
+
+	/**@var $db Varien_Db_Adapter_Pdo_Mysql*/
+	protected $db = null;
+
 	public function preDispatch() {
 		$this->_skipAuthentication = true;
 		parent::preDispatch();
@@ -65,7 +71,8 @@ class Itoris_MWishlist_AjaxController extends Mage_Wishlist_IndexController {
 		
 	}
 	
-	public function updateItemOptionsAction() {
+	public function updateItemOptionsAction($prd=null, $prdqty=null)
+	{
 		
 		$result = array(
 				'success'  => false,
@@ -76,17 +83,30 @@ class Itoris_MWishlist_AjaxController extends Mage_Wishlist_IndexController {
 		$itemsTable = $this->itemsTable;
 		$wishlistItemTable = $this->wishlistTable;
 		
-		$id = (int) $this->getRequest()->getParam('id');
-		$qty = (int) $this->getRequest()->getParam('qty');
-		$qty = $qty ? $qty : 1;
+		if(empty($prdqty) & empty($prd))
+		{
+			$id = (int) $this->getRequest()->getParam('id');
+			$qty = (int) $this->getRequest()->getParam('qty');
+			$qty = $qty ? $qty : 1;
+		}
+		else 
+		{
+			$id = (int) $prd;
+			$qty = (int) $prdqty;
+		}
 
 		try {
 			$db = Mage::getSingleton('core/resource')->getConnection('core_write');
 			$db->query("UPDATE $wishlistItemTable SET `qty` = $qty WHERE `product_id` = $id limit 1");
-			//save the data
-			$message = $this->__('%1$s Product quantity updted successfully', $id);
-			$result['message'] = $message;
-			$result['success'] = true;
+			
+			if(empty($prdqty) & empty($prd))
+			{
+				$message = $this->__('%1$s Product quantity updted successfully', $id);
+				$result['message'] = $message;
+				$result['success'] = true;
+			}
+			else
+				return true;
 
 		} catch (Exception $e){
 			$result['error'] = $this->__($e->getMessage());
@@ -152,7 +172,9 @@ class Itoris_MWishlist_AjaxController extends Mage_Wishlist_IndexController {
 						);
 						$mwishlist->insertItemsInList($result->getId(), $mwishlistId);
 						Mage::helper('wishlist')->calculate();
-
+						
+						$this->updateItemOptionsAction($requestParams['product'], $requestParams['qty']);
+						
 						$message = $this->__('%1$s has been added to your wishlist %2$s.', $product->getName(), $mwishlist->getWishlistNameById($mwishlistId));
 						$result['message'] = $message;
 						$result['success'] = true;

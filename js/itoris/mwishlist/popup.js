@@ -147,6 +147,7 @@ Itoris.WishlistPopup = Class.create({
 		params.mwishlist_id = wishlistId;
 		params.is_new =  isNew ? 1 : 0;
 		params.product = addPorductId;
+		params.qty = $('itoris-wishlist-radiostack-textqty').getValue();
 		$('itoris-wishlist-popup-loading').show();
 		new Ajax.Request(this.config.add_product_ajax_url, {
 			method: 'get',
@@ -195,7 +196,7 @@ Itoris.WishlistPopup = Class.create({
 			onComplete: function(res) {
 				var resObj = res.responseText.evalJSON();
 				if(resObj.success)
-				{ alert(resObj.qtyvalue);
+				{
 					//this.closePopup();
 					//showMessage(resObj.message);
 					$('itoris-wishlist-popup-loading').hide();
@@ -219,6 +220,7 @@ Itoris.WishlistPopup = Class.create({
 					$('itoris-wishlist-text-qty').hide();
 					$('itoris-wishlist-button-select').show();
 					$('itoris-wishlist-button-update-qty').hide();
+					$('itoris-wishlist-radiostack-textqty').setValue('1');
 
 					this.popup.show();
 					var obj = this;
