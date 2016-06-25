@@ -36,6 +36,7 @@ Itoris.WishlistPopup = Class.create({
 		Event.observe($('itoris-wishlist-radiostack'), 'keypress', this.selectWishlistByKey.bind(this));
 		Event.observe(this.popup.select('.itoris-wishlist-button-cancel')[0], 'click', this.closePopup.bind(this));
 		Event.observe(this.popup.select('.itoris-wishlist-button-select')[0], 'click', this.selectWishlist.bind(this));
+		Event.observe(this.popup.select('.itoris-wishlist-button-update-qty')[0], 'click', this.updateWishlistQty.bind(this));
 		var obj = this;
 		$$('.itoris-wishlist-radio').each(function(elm){
 			if (elm.checked) {
@@ -146,6 +147,7 @@ Itoris.WishlistPopup = Class.create({
 		params.mwishlist_id = wishlistId;
 		params.is_new =  isNew ? 1 : 0;
 		params.product = addPorductId;
+		params.qty = $('itoris-wishlist-radiostack-textqty').getValue();
 		$('itoris-wishlist-popup-loading').show();
 		new Ajax.Request(this.config.add_product_ajax_url, {
 			method: 'get',
@@ -180,18 +182,90 @@ Itoris.WishlistPopup = Class.create({
 		}
 	},
 	showPopup: function() {
-		this.popup.show();
-		var obj = this;
-		$$('.itoris-wishlist-radio').each(function(elm){
-			if (elm.value == obj.mainWishlist) {
-				elm.checked = true;
-				obj.checkWishlist(elm);
-			}
+		var productIdMatch = this.clickedLink.href.match(/\/product\/([0-9]+)/);
+		var addPorductId = 0;
+		if (productIdMatch) {
+			addPorductId = productIdMatch[1];
+		}
+		var paramsq = {};
+		paramsq.product_id = addPorductId;
+		$('itoris-wishlist-popup-loading').show();
+		new Ajax.Request(this.config.check_product_ajax_url, {
+			method: 'get',
+			parameters: paramsq,
+			onComplete: function(res) {
+				var resObj = res.responseText.evalJSON();
+				if(resObj.success)
+				{
+					$('itoris-wishlist-popup-loading').hide();
+					this.popup.show();
+					var obj = this;
+					$('itoris-wishlist-popup-radiostack-title').hide();
+					$('itoris-wishlist-radiostack').hide();
+					$('itoris-wishlist-popup-text-qty-title').show();
+					$('itoris-wishlist-text-qty').show();
+					$('itoris-wishlist-button-select').hide();
+					$('itoris-wishlist-button-update-qty').show();
+					$('itoris-wishlist-textqty').setValue(resObj.qtyvalue);
+					this.resizePopup(this.defaultPopupWidth);
+				}
+				else
+				{
+					$('itoris-wishlist-popup-loading').hide();
+					$('itoris-wishlist-popup-radiostack-title').show();
+					$('itoris-wishlist-radiostack').show();
+					$('itoris-wishlist-popup-text-qty-title').hide();
+					$('itoris-wishlist-text-qty').hide();
+					$('itoris-wishlist-button-select').show();
+					$('itoris-wishlist-button-update-qty').hide();
+					$('itoris-wishlist-radiostack-textqty').setValue('1');
+
+					this.popup.show();
+					var obj = this;
+					$$('.itoris-wishlist-radio').each(function(elm){
+						if (elm.value == obj.mainWishlist) {
+							elm.checked = true;
+							obj.checkWishlist(elm);
+						}
+					});
+					this.resizePopup(this.defaultPopupWidth);				
+				}
+			}.bind(this)
 		});
-		this.resizePopup(this.defaultPopupWidth);
+
 	},
 	closePopup: function() {
 		this.popup.hide();
 		this.clickedLink = null;
-	}
+	},
+	updateWishlistQty: function() {
+		var obj = this;
+		var productIdMatch = this.clickedLink.href.match(/\/product\/([0-9]+)/);
+		var addPorductId = 0;
+		if (productIdMatch) {
+			addPorductId = productIdMatch[1];
+		}
+		var params = {};
+
+		params.qty = $('itoris-wishlist-textqty').getValue();
+		params.id = addPorductId;
+		$('itoris-wishlist-popup-loading').show();
+		new Ajax.Request(this.config.update_wishlist_option, {
+			method: 'get',
+			parameters: params,
+			onComplete: function(res) {
+				var resObj = res.responseText.evalJSON();
+				if (resObj.success) {
+					this.closePopup();
+					$('itoris-wishlist-popup-loading').hide();
+					showMessage(resObj.message);
+				}
+				else
+				{
+					$('itoris-wishlist-popup-loading').hide();
+					setLocation(resObj.redirect);
+				}
+			}.bind(this)
+		});
+	},
 });
