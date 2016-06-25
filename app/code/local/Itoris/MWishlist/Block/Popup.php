@@ -67,6 +67,8 @@ class Itoris_MWishlist_Block_Popup extends Mage_Core_Block_Template {
 										&& !$this->_isCartPage(),
 			'check_wishlist_url'   => Mage::getUrl('wishlist/index/ajax/'),
 			'add_product_ajax_url' => Mage::getUrl('wishlist/ajax/addProduct/'),
+			'check_product_ajax_url' => Mage::getUrl('wishlist/ajax/checkproduct/'),
+			'update_wishlist_option' => Mage::getUrl('wishlist/ajax/updateItemOptions/'),
 			'wishlist_url'         => Mage::getUrl('wishlist'),
 			'update_wishlist_link_url' => Mage::getUrl('wishlist/index/itemCount'),
 			'message_empty_name'   => $this->__('Enter the name of new wishlist'),
