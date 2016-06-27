@@ -55,12 +55,9 @@ class Itoris_MWishlist_AjaxController extends Mage_Wishlist_IndexController {
 		$mwishlistnm = new Itoris_MWishlist_Model_Mwishlistnames();
 		$extproductwish = $mwishlistnm->isProductInWishlist($product_id);
 		
-		if(empty($extproductwish)) {
-
-			$result['error'] = $this->__('Product is not in whishlist');
-
+		if (empty($extproductwish)) {
+			$result['error'] = $this->__('Add this product to your reservation list.');
 		} else {
-
 			$resource = Mage::getSingleton('core/resource');
 			$conn = $resource->getConnection('core_read');
 			$select = $conn->select()
@@ -68,15 +65,13 @@ class Itoris_MWishlist_AjaxController extends Mage_Wishlist_IndexController {
 					->where('product_id = ?', $product_id);
 			$productqty = $conn->fetchAll($select);
 
-
-			$message = $this->__('Product already inside whishlist', $product_id);
+			$message = $this->__('This product is already in your reservation list. Please input the new total quantity.', $product_id);
 			$result['message'] = $message;
 			$result['qtyvalue'] = (int) $productqty[0]['qty'];
 			$result['success'] = true;
 		}
 		
-		$this->getResponse()->setBody(Zend_Json::encode($result));
-		
+		$this->getResponse()->setBody(Zend_Json::encode($result));		
 	}
 	
 	public function updateItemOptionsAction($prd=null, $prdqty=null) {
@@ -91,11 +86,9 @@ class Itoris_MWishlist_AjaxController extends Mage_Wishlist_IndexController {
 		$wishlistItemTable = $this->wishlistTable;
 
 		if (empty($prdqty) && empty($prd)) {
-
 			$id = (int) $this->getRequest()->getParam('id');
 			$qty = (int) $this->getRequest()->getParam('qty');
 			$qty = $qty ? $qty : 1;
-
 		} else {
 			$id = (int) $prd;
 			$qty = (int) $prdqty;
@@ -113,11 +106,9 @@ class Itoris_MWishlist_AjaxController extends Mage_Wishlist_IndexController {
 							'product_id = ?' => $id
 					)
 				);
-
 			
 			if (empty($prdqty) && empty($prd)) {
-
-				$message = $this->__('%1$s Product quantity updted successfully', $id);
+				$message = $this->__('%1$s Product quantity updated successfully', $id);
 				$result['message'] = $message;
 				$result['success'] = true;
 			}
@@ -129,7 +120,6 @@ class Itoris_MWishlist_AjaxController extends Mage_Wishlist_IndexController {
 		}
 		
 		$this->getResponse()->setBody(Zend_Json::encode($result));
-
 	}
 
 	public function AddProductAction() {

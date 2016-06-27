@@ -195,8 +195,7 @@ Itoris.WishlistPopup = Class.create({
 			parameters: paramsq,
 			onComplete: function(res) {
 				var resObj = res.responseText.evalJSON();
-				if(resObj.success)
-				{
+				if (resObj.success) {
 					$('itoris-wishlist-popup-loading').hide();
 					this.popup.show();
 					var obj = this;
@@ -208,9 +207,7 @@ Itoris.WishlistPopup = Class.create({
 					$('itoris-wishlist-button-update-qty').show();
 					$('itoris-wishlist-textqty').setValue(resObj.qtyvalue);
 					this.resizePopup(this.defaultPopupWidth);
-				}
-				else
-				{
+				} else {
 					$('itoris-wishlist-popup-loading').hide();
 					$('itoris-wishlist-popup-radiostack-title').show();
 					$('itoris-wishlist-radiostack').show();
@@ -259,9 +256,7 @@ Itoris.WishlistPopup = Class.create({
 					this.closePopup();
 					$('itoris-wishlist-popup-loading').hide();
 					showMessage(resObj.message);
-				}
-				else
-				{
+				} else {
 					$('itoris-wishlist-popup-loading').hide();
 					setLocation(resObj.redirect);
 				}
