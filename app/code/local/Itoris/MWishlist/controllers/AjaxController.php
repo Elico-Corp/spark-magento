@@ -115,7 +115,7 @@ class Itoris_MWishlist_AjaxController extends Mage_Wishlist_IndexController {
 			else
 				return true;
 			
-		} catch (Exception $e){
+		} catch (Exception $e) {
 			$result['error'] = $this->__($e->getMessage());
 		}
 		
