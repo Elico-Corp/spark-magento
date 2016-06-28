@@ -186,7 +186,8 @@
                         }
 
                         if(jQuery('.pager .pages li.current') !== undefined) {
-                            data += '&p=' + jQuery('.pager .pages li.current a').html();
+                            var pagerdata = (jQuery('.pager .pages li.current a').html() == undefined) ? "<?php echo $_GET['p'];?>" : jQuery('.pager .pages li.current a').html();
+                            data += '&p=' + pagerdata;				
                         }
 
                         jQuery.post('<?php echo Mage::getUrl('search/index/list',  array('_forced_secure' => true)); ?>', data, function(data) {
