@@ -27,9 +27,99 @@ require_once Mage::getModuleDir('controllers', 'Mage_Wishlist') . DS . 'IndexCon
 
 class Itoris_MWishlist_AjaxController extends Mage_Wishlist_IndexController {
 
+	protected $itemsTable = 'itoris_mwishlist_items';
+	protected $wishlistTable = 'wishlist_item';
+
+	/**@var $db Varien_Db_Adapter_Pdo_Mysql*/
+	protected $resource = null;
+	protected $conn = null;
+
 	public function preDispatch() {
 		$this->_skipAuthentication = true;
 		parent::preDispatch();
+	}
+
+	public function checkProductAction() {
+
+		$itemsTable = $this->itemsTable;
+		$wishlistItemTable = $this->wishlistTable;
+		
+		$result = array(
+				'success'  => false,
+				'error'    => null,
+				'redirect' => null,
+				'qtyvalue' => null,
+		);
+
+		$product_id = $this->getRequest()->getParam('product_id');
+		$mwishlistnm = new Itoris_MWishlist_Model_Mwishlistnames();
+		$extproductwish = $mwishlistnm->isProductInWishlist($product_id);
+		
+		if (empty($extproductwish)) {
+			$result['error'] = $this->__('Add this product to your reservation list.');
+		} else {
+			$resource = Mage::getSingleton('core/resource');
+			$conn = $resource->getConnection('core_read');
+			$select = $conn->select()
+					->from(array($resource->getTableName($wishlistItemTable)))
+					->where('product_id = ?', $product_id);
+			$productqty = $conn->fetchAll($select);
+
+			$message = $this->__('This product is already in your reservation list. Please input the new total quantity.', $product_id);
+			$result['message'] = $message;
+			$result['qtyvalue'] = (int) $productqty[0]['qty'];
+			$result['success'] = true;
+		}
+		
+		$this->getResponse()->setBody(Zend_Json::encode($result));		
+	}
+	
+	public function updateItemOptionsAction($prd=null, $prdqty=null) {
+		
+		$result = array(
+				'success'  => false,
+				'error'    => null,
+				'redirect' => null,
+		);
+		
+		$itemsTable = $this->itemsTable;
+		$wishlistItemTable = $this->wishlistTable;
+
+		if (empty($prdqty) && empty($prd)) {
+			$id = (int) $this->getRequest()->getParam('id');
+			$qty = (int) $this->getRequest()->getParam('qty');
+			$qty = $qty ? $qty : 1;
+		} else {
+			$id = (int) $prd;
+			$qty = (int) $prdqty;
+		}
+
+		try {
+			$resource = Mage::getSingleton('core/resource');
+			$conn = $resource->getConnection('core_read');
+			$update = $conn->update(
+					$resource->getTableName($wishlistItemTable),
+					array(
+							'qty' => $qty
+					),
+					array(
+							'product_id = ?' => $id
+					)
+				);
+			
+			if (empty($prdqty) && empty($prd)) {
+				$message = $this->__('%1$s Product quantity updated successfully', $id);
+				$result['message'] = $message;
+				$result['success'] = true;
+			}
+			else
+				return true;
+			
+		} catch (Exception $e) {
+			$result['error'] = $this->__($e->getMessage());
+		}
+		
+		$this->getResponse()->setBody(Zend_Json::encode($result));
 	}
 
 	public function AddProductAction() {
@@ -89,6 +179,8 @@ class Itoris_MWishlist_AjaxController extends Mage_Wishlist_IndexController {
 						);
 						$mwishlist->insertItemsInList($result->getId(), $mwishlistId);
 						Mage::helper('wishlist')->calculate();
+						
+						$this->updateItemOptionsAction($requestParams['product'], $requestParams['qty']);
 
 						$message = $this->__('%1$s has been added to your wishlist %2$s.', $product->getName(), $mwishlist->getWishlistNameById($mwishlistId));
 						$result['message'] = $message;
