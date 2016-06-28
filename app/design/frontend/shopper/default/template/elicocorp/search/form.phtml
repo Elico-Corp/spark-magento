@@ -186,7 +186,6 @@
                         }
 
                         if(jQuery('.pager .pages li.current') !== undefined) {
-                            //data += '&p=' + jQuery('.pager .pages li.current a').html();
                             var pagerdata = (jQuery('.pager .pages li.current a').html() == undefined) ? "<?php echo $_GET['p'];?>" : jQuery('.pager .pages li.current a').html();
                             data += '&p=' + pagerdata;				
                         }
