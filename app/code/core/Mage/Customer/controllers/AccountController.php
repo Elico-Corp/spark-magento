@@ -262,10 +262,6 @@ class Mage_Customer_AccountController extends Mage_Core_Controller_Front_Action
      */
     public function createPostAction()
     {
-        if (!$this->_validateFormKey()) {
-            $this->_redirectError(Mage::getUrl('*/*/create', array('_secure' => true)));
-            return;
-        }
 
         $session = $this->_getSession();
         if ($session->isLoggedIn()) {
