@@ -69,7 +69,7 @@
 			}
                         var form_data = ""
                         if(jQuery('.pager .pages li.current') !== undefined) {
-                            jQuery('.pager .pages li.current').removeClass('current');
+                                jQuery('.pager .pages li.current').removeClass('current');
                         }
                         jQuery('#elico_search select').each(function(){ 
                             if(jQuery(this).val() == "" || jQuery(this).val() == null || /-- All/i.test(jQuery(this).val()))
@@ -186,7 +186,7 @@
                         }
 
                         if(jQuery('.pager .pages li.current') !== undefined) {
-				data += '&p=' + jQuery('.pager .pages li.current a').html();				
+                            data += '&p=' + jQuery('.pager .pages li.current a').html();				
                         }
 
                         jQuery.post('<?php echo Mage::getUrl('search/index/list',  array('_forced_secure' => true)); ?>', data, function(data) {
