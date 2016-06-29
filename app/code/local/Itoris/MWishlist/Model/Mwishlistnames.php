@@ -403,13 +403,13 @@ class Itoris_MWishlist_Model_Mwishlistnames extends Varien_Object {
 		// Mage::dispatchEvent('itoris_wishlist_update', array('wishlist' => $this));
 	}
 
-	public function isProductInWishlist($productId) {
+	public function isProductInWishlist($productId, $mwishlistid=null) {
 		$itemsTable = $this->itemsTable;
 		$wishlistItemTable = $this->wishlistTable;
 		/**@var $db Varien_Db_Adapter_Pdo_Mysql*/
 		$db = Mage::getSingleton('core/resource')->getConnection('core_write');
 		$productId = (int)$productId;
-		return $db->fetchRow("SELECT * FROM $wishlistItemTable Inner Join  $itemsTable ON $wishlistItemTable .`wishlist_item_id`= $itemsTable.`item_id` where `product_id` = $productId limit 1");
+		return $db->fetchRow("SELECT * FROM $wishlistItemTable whi Join  $itemsTable imi ON whi .`wishlist_item_id`= imi.`item_id` where imi.`multiwishlist_id` = $mwishlistid and whi.`product_id` = $productId limit 1");
 	}
 
 	public function getWishlistItems($id) {
