@@ -168,7 +168,7 @@
                         if(jQuery('.toolbar-switch.limiter select').val() !== undefined){
                             data += '&limit=' + jQuery('.toolbar-switch.limiter select').val();
                         } else {
-                            data += '&limit=15';
+                            data += '&limit=' + <?php echo $_GET['limit'];?>;
                         }
 
                         if(jQuery('.view-mode ').attr("class") !== undefined){
