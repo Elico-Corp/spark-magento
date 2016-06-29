@@ -51,9 +51,11 @@ class Itoris_MWishlist_AjaxController extends Mage_Wishlist_IndexController {
 				'qtyvalue' => null,
 		);
 
+		$customerData = Mage::getSingleton('customer/session')->getCustomer();
 		$product_id = $this->getRequest()->getParam('product_id');
 		$mwishlistnm = new Itoris_MWishlist_Model_Mwishlistnames();
-		$extproductwish = $mwishlistnm->isProductInWishlist($product_id);
+		$mwishlistid =  $mwishlistnm->checkReservationWishlist($customerData->getId());
+		$extproductwish = $mwishlistnm->isProductInWishlist($product_id, $mwishlistid);
 		
 		if (empty($extproductwish)) {
 			$result['error'] = $this->__('Add this product to your reservation list.');
