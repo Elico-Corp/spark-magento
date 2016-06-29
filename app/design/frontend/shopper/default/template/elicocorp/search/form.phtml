@@ -168,13 +168,13 @@
                         if(jQuery('.toolbar-switch.limiter select').val() !== undefined){
                             data += '&limit=' + jQuery('.toolbar-switch.limiter select').val();
                         } else {
-                            data += '&limit=' + <?php echo $_GET['limit'];?>;
+                            data += '&limit=' + <?php echo array_key_exists('limit', $_GET) ? $_GET['limit'] : 15;?>;
                         }
 
                         if(jQuery('.view-mode ').attr("class") !== undefined){
                             data += '&order=' + jQuery('.toolbar-switch.sort-by select').val();
                         } else {
-                            data += '&order=position';
+                            data += '&order=' + <?php echo array_key_exists('order', $_GET) ? $_GET['order'] : 'position';?>;
                         }
 
                         if(window.view_mode  !== undefined){
