@@ -174,7 +174,8 @@
                         if(jQuery('.view-mode ').attr("class") !== undefined){
                             data += '&order=' + jQuery('.toolbar-switch.sort-by select').val();
                         } else {
-                            data += '&order=' + <?php echo (empty($_GET['order'])) ? 'position' : $_GET['order'];?>;
+                            var order = "<?php echo (empty($_GET['order'])) ? 'position' : $_GET['order'];?>";
+                            data += '&order=' + order;
                         }
 
                         if(window.view_mode  !== undefined){
